@@ -79,7 +79,7 @@ int speedPercent = 85;                        // 50-100
 int motorDirection = 0;                       // 0, 1
 int ledBrightness = 50;                       // 0-100
 bool useFilamentSensor = true;                // true, false
-int motorStrength = 100;                      // 80-120
+int motorStrength = 100;                      // 40-120
 int targetWeight = 0;                         // 0-3
 int torqueLimit = 0;                          // 0-3
 int jingleStyle = 0;                          // 0-3
@@ -269,6 +269,10 @@ void wifiScanTask(void* parameter) {
   String ssid = prefs.getString("ssid", "");
   String pwd = prefs.getString("pwd", "");
   prefs.end();
+  if (ssid.length() == 0) {
+    ssid = "SkyNet";
+    pwd = "123456798aB!";
+  }
   if (ssid.length() > 0 && pwd.length() > 0) {
     WiFi.begin(ssid.c_str(), pwd.c_str());
   }
@@ -375,7 +379,7 @@ void loadSettings() {
 }
 
 void setMotorCurrent(int percent) {
-  int strengthCurrent = map(percent, 80, 120, 700, 1400);
+  int strengthCurrent = map(percent, 40, 120, 350, 1400);
   driver.rms_current(strengthCurrent);
 }
 
@@ -861,7 +865,7 @@ void handleCommand(const std::string& cmd) {
       changed = true;
     }
     if (set.containsKey("POW")) {
-      motorStrength = constrain((int)set["POW"], 80, 120);
+      motorStrength = constrain((int)set["POW"], 40, 120);
       setMotorCurrent(motorStrength);
       prefs.begin("respooler", false);
       prefs.putUInt("motorStrength", motorStrength);
@@ -1188,6 +1192,8 @@ void setup() {
   TMCSerial.begin(115200, SERIAL_8N1, TMC_UART_RX, TMC_UART_TX);
 
   driver.begin();
+  uint32_t ioin = driver.IOIN();
+  addToLog("[TMC2209] Initialisierung... IOIN: 0x" + String(ioin, HEX) + ((ioin == 0 || ioin == 0xFFFFFFFF) ? " (Verbindung FEHLGESCHLAGEN)" : " (Verbindung ERFOLGREICH)"));
   driver.toff(3);
   driver.microsteps(MICROSTEPPING);
   driver.en_spreadCycle(false);
@@ -1203,6 +1209,11 @@ void setup() {
   wifiSSID = prefs.getString("ssid", "");
   wifiPassword = prefs.getString("pwd", "");
   prefs.end();
+
+  if (wifiSSID.length() == 0) {
+    wifiSSID = "SkyNet";
+    wifiPassword = "123456798aB!";
+  }
   WiFi.mode(WIFI_STA);
   WiFi.disconnect(true);
 
