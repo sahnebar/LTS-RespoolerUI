@@ -12,6 +12,8 @@ This version introduces a **built-in Web Interface** served directly by the ESP3
 
 All build and configuration files can be found in the [Firmware/build](file:///root/LTS-Respooler/Firmware/build) directory. You can compile the project using PlatformIO.
 
+<img width="953" height="905" alt="2026-06-16 15_36_44-NVIDIA GeForce Overlay" src="https://github.com/user-attachments/assets/9ed1611b-2e2b-4169-ae01-a7bd90ebc6d5" />
+
 ## ➡️ Upcoming features and files:
 
 - Official attachment for spools bigger than 1 kg
